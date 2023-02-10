@@ -1,8 +1,6 @@
-import { enableMapSet, produce } from 'immer';
+import { produce } from 'immer';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-enableMapSet();
 
 export type TodoEntity = {
     id: string;
@@ -10,7 +8,7 @@ export type TodoEntity = {
     isComplete: boolean;
 }
 
-export type TodoStore = {
+export type TodoStoreState = {
     todos: Map<string, TodoEntity>;
     getTodo: (id: string) => TodoEntity | undefined;
     getTodos: () => TodoEntity[];
@@ -18,7 +16,7 @@ export type TodoStore = {
     removeTodo: (id: string) => void;
 }
 
-const useTodoStore = create<TodoStore>()(persist((set, get) => ({
+const useTodoStore = create<TodoStoreState>()(persist((set, get) => ({
     todos: new Map([]),
     getTodo: (id: string) => {
         return get().todos.get(id);
@@ -27,12 +25,12 @@ const useTodoStore = create<TodoStore>()(persist((set, get) => ({
         return Array.from(get().todos.values()) as TodoEntity[];
     },
     setTodo: (todo: TodoEntity) => {
-        set(produce((state: TodoStore) => {
+        set(produce((state: TodoStoreState) => {
             state.todos.set(todo.id, todo);
         }));
     },
     removeTodo: (id: string) => {
-        set(produce((state: TodoStore) => {
+        set(produce((state: TodoStoreState) => {
             const result: boolean = state.todos.delete(id);
 
             if (!result) {

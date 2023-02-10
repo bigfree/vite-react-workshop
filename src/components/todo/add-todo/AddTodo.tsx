@@ -1,9 +1,9 @@
 import { nanoid } from 'nanoid';
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
 import './AddTodo.css';
-import useTodoStore, { TodoStore } from '../../../store/TodoStore';
+import useTodoStore, { TodoStoreState } from '../../../store/TodoStoreState';
 
-const addTodoSelector = (store: TodoStore) => store.setTodo;
+const addTodoSelector = (store: TodoStoreState) => store.setTodo;
 
 const AddTodo: FC = (): JSX.Element => {
     const setTodo = useTodoStore(addTodoSelector);
