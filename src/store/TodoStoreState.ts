@@ -1,6 +1,9 @@
-import { produce } from 'immer';
+import { enableMapSet, produce } from 'immer';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { todoStorePersisConfig } from '../config/PersistStoreConfig';
+
+enableMapSet();
 
 export type TodoEntity = {
     id: string;
@@ -25,21 +28,19 @@ const useTodoStore = create<TodoStoreState>()(persist((set, get) => ({
         return Array.from(get().todos.values()) as TodoEntity[];
     },
     setTodo: (todo: TodoEntity) => {
-        set(produce((state: TodoStoreState) => {
-            state.todos.set(todo.id, todo);
+        set(produce((draft: TodoStoreState) => {
+            draft.todos.set(todo.id, todo);
         }));
     },
     removeTodo: (id: string) => {
-        set(produce((state: TodoStoreState) => {
-            const result: boolean = state.todos.delete(id);
+        set(produce((draft: TodoStoreState) => {
+            const result: boolean = draft.todos.delete(id);
 
             if (!result) {
                 throw new Error(`Could not delete todo with id ${id}`);
             }
         }));
     },
-}), {
-    name: 'todo-store', // storage name
-}));
+}), todoStorePersisConfig));
 
 export default useTodoStore;
