@@ -17,4 +17,7 @@ export const todoStorePersisConfig: PersistOptions<TodoStoreState> = {
         data.state.todos = new Map<string, TodoEntity>(data.state.todos);
         return data;
     },
+    onRehydrateStorage: () => (state: TodoStoreState | undefined) => {
+        state?._setHasHydrated(true);
+    }
 };
