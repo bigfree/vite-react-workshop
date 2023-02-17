@@ -13,26 +13,45 @@ export type TodoEntity = {
     completedAt?: Date | null;
 }
 
+export enum FilterType {
+    FILTER_ALL = 'filter/all',
+    FILTER_COMPLETED = 'filter/completed',
+    FILTER_UNCOMPLETED = 'filter/uncompleted',
+}
+
 export type TodoStoreState = {
     todos: Map<string, TodoEntity>;
+    filter: FilterType,
     getTodo: (id: string) => TodoEntity | undefined;
     getTodos: () => TodoEntity[];
     setTodo: (todo: TodoEntity) => void;
     editTodo: (todo: TodoEntity) => void;
     removeTodo: (id: string) => void;
     removeAllTodo: () => void;
+    changeFilter: (filter: FilterType) => void;
     _hasHydrated: boolean,
     _setHasHydrated: (state: boolean) => void;
 }
 
 const useTodoStore = create<TodoStoreState>()(persist((set, get) => ({
     todos: new Map([]),
+    filter: FilterType.FILTER_ALL,
     _hasHydrated: false,
     getTodo: (id: string) => {
         return get().todos.get(id);
     },
     getTodos: () => {
-        return Array.from(get().todos.values()) as TodoEntity[];
+        const todos = Array.from(get().todos.values()) as TodoEntity[];
+
+        return todos.filter((todo: TodoEntity) => {
+            if (FilterType.FILTER_COMPLETED === get().filter) {
+                return todo.isComplete;
+            } else if (FilterType.FILTER_UNCOMPLETED === get().filter) {
+                return !todo.isComplete;
+            } else {
+                return true;
+            }
+        });
     },
     setTodo: (todo: TodoEntity) => {
         set(produce((draft: TodoStoreState) => {
@@ -64,6 +83,11 @@ const useTodoStore = create<TodoStoreState>()(persist((set, get) => ({
     removeAllTodo: () => {
         set(produce((draft: TodoStoreState) => {
             draft.todos = new Map([]);
+        }));
+    },
+    changeFilter: (filter: FilterType) => {
+        set(produce((draft: TodoStoreState) => {
+            draft.filter = filter;
         }));
     },
     _setHasHydrated: (isHydrated: boolean) => {

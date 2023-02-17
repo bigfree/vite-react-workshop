@@ -3,7 +3,7 @@ import { IconX } from '@tabler/icons-react';
 import { nanoid } from 'nanoid';
 import { ChangeEvent, FC, FormEvent, useState } from 'react';
 import useTodoStore, { TodoStoreState } from '../../../store/TodoStoreState';
-import { Blue, Red } from '../../../theme/palette';
+import { Blue, Gray, Red } from '../../../theme/palette';
 import './AddTodo.css';
 
 const buttonSharedCss = css({
@@ -52,7 +52,13 @@ const AddTodo: FC = (): JSX.Element => {
                         autoComplete={'off'}
                         className={'add-todo__input'}
                         value={todoName}
+                        placeholder={'Enter new todo...'}
                         onChange={(event: ChangeEvent<HTMLInputElement>) => setTodoName(event.target.value)}
+                        css={css({
+                            '&::placeholder': {
+                                color: Gray['A200']
+                            }
+                        })}
                     />
                     {todoName && (<button
                         type={'button'}
