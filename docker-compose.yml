@@ -6,7 +6,7 @@ services:
       context: .
     volumes:
       - ./:/vite
-      - /src/node_modules
+      - /node_modules
     ports:
       - "3000:3000"
     command: yarn dev
